@@ -3,10 +3,16 @@
  * Lab 3
  *
  * Name: Bernardo de Almeida Abreu
- * UNI: bd2440
+ * UNI:  bd2440
+ *
+ * Name: Henrique Pizzol Grando
+ * UNI:  hp2409
+ * 
+ * Name: Lucas Ikenaga Barros
+ * UNI:  li2176
  *
  * Name: Tomas Mantelato
- * UNI: tm2779
+ * UNI:  tm2779
  * 
  */
 
@@ -16,19 +22,22 @@
 #include <linux/ioctl.h>
 
 
-typedef struct {
+typedef struct 
+{
 	short sprite_x, sprite_y;
   	unsigned char shape;
   	unsigned char count;
   	unsigned char layer;	
-}sprite_info;
+} sprite_info;
 
-typedef struct {
+typedef struct
+{
 	unsigned char life_1, life_2;
   	unsigned int background_color;	
-}screen;
+} screen;
 
-typedef struct {
+typedef struct
+{
 	sprite_info sprite;
 	screen background;
 } vga_screen_arg_t;
