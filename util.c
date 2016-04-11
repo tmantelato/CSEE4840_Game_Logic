@@ -17,9 +17,24 @@ void generate_ground (int line, int row)
     int blocks_chance = rand() % 20;
 
     if (blocks_chance < 10)
-    {     
-        ground[row] = (sprite_info *) malloc (3 * sizeof(sprite_info));
-        line_length[row] = 3;
+    {   
+        // Checking if it won't surpass the maximum number of sprites allowed(8)
+        int i;
+        int sum = 0;
+        for (i = 0; i < 3; i++)
+            sum += line_length[i];
+        sum -= line_length[row];
+
+        if (sum == 6)
+        {
+            ground[row] = (sprite_info *) malloc (2 * sizeof(sprite_info));
+            line_length[row] = 2;
+        }
+        else
+        {
+            ground[row] = (sprite_info *) malloc (3 * sizeof(sprite_info));
+            line_length[row] = 3;
+        }
     }
     else if (blocks_chance < 18)
     {
@@ -32,7 +47,7 @@ void generate_ground (int line, int row)
         line_length[row] = 1;
     }
 
-    // Defining the ground size and starting point
+    // Defining the ground size, starting point, id and layer
     // The starting point is defined depending on how many blocks we
     // have per line (line_length[row]) and an offset of 8 pixels on 
     // each side of the screen is added.  (8 ~ 632)
@@ -41,7 +56,21 @@ void generate_ground (int line, int row)
     int dx = (632 - 8) / line_length[row];        // size of each column 
     for (j = 0; j < line_length[row]; j++)
     {
-        ground[row][j].shape = 0;
+        ground[row][j].shape = GROUND;
+        ground[row][j].sprite_y = line;
+        ground[row][j].layer = SCENARIO;
+        ground[row][j].orientation = RIGHT;
+
+        // Defining the id of each sprite
+        if (row != 0)
+        {
+            ground[row][j].id = 
+                ground[row - 1][line_length[row - 1] - 1].id + j + 1;
+        }
+        else
+        {
+            ground[row][j].id = j;
+        }
 
         int begin = dx * j + 8;                 // begin of curr. column
         
@@ -73,7 +102,5 @@ void generate_ground (int line, int row)
             ground[row][j].sprite_x = 
                 (rand() % (dx - ground[row][j].count)) + begin;
         }
-
-        ground[row][j].sprite_y = line;
     }
 }

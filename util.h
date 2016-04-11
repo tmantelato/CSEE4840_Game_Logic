@@ -5,6 +5,23 @@
 #include <stdlib.h>
 #include "vga_led.h"
 
+// Shapes
+#define GROUND 0
+#define GP_STAND 10
+#define GM_STAND 12
+
+// ID
+#define GP_ID 0
+#define GM_ID 1
+
+// Layers
+#define SCENARIO 0
+#define OBJECTS  1
+
+// Orientation
+#define RIGHT 0
+#define LEFT  1
+
 /* Generates platforms in the given line, allocating the memory according to 
    the given row */
 void generate_ground (int, int);

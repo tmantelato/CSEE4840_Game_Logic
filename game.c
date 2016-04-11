@@ -59,24 +59,10 @@ int main()
 
     int row = 0;        // The next row of ground to be generated
 
-    /*sprite_info grandpa;
-    grandpa.sprite_y = 150;
-    grandpa.sprite_x = 150;
-    grandpa.shape = 10;
-    grandpa.count = 0;
-    grandpa.layer = 5;
-
-    sprite_info grandma;
-    grandma.sprite_y = 250;
-    grandma.sprite_x = 450;
-    grandma.shape = 12;
-    grandma.count = 0;
-    grandma.layer = 6;
-
     screen back;
     back.life_1 = 2;
     back.life_2 = 2;
-    back.background_color = 0x152050;*/
+    back.background_color = 0x152050;
   
 
     printf("GAME TEST Userspace program terminating\n");
@@ -88,6 +74,35 @@ int main()
     generate_ground(160, row++);
     generate_ground(320, row++);
     row = 0;
+
+    // Writing to driver
+    int i, j;
+    for (i = 0; i < 3; i++)
+    {
+        for (j = 0; j < line_length[i]; j++)
+        {
+            write_info(ground[i][j], back);
+        }
+    }
+
+    // Setting grandpa and grandma starting positions
+    sprite_info grandpa;
+    grandpa.sprite_y = 120;
+    grandpa.sprite_x = 310;
+    grandpa.shape = GP_STAND;
+    grandpa.id = GP_ID;
+    grandpa.count = 0;
+    grandpa.layer = OBJECTS;
+    grandpa.orientation = RIGHT;
+
+    sprite_info grandma;
+    grandma.sprite_y = 120;
+    grandma.sprite_x = 330;
+    grandma.shape = GM_STAND;
+    grandma.id = GM_ID;
+    grandma.count = 0;
+    grandma.layer = OBJECTS;
+    grandma.orientation = LEFT;
 
     while (1)
     {

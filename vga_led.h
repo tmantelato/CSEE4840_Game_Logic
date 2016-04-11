@@ -24,10 +24,12 @@
 
 typedef struct 
 {
+    unsigned char id;
 	short sprite_x, sprite_y;
   	unsigned char shape;
   	unsigned char count;
-  	unsigned char layer;	
+  	unsigned char layer;
+    unsigned char orientation;	
 } sprite_info;
 
 typedef struct
