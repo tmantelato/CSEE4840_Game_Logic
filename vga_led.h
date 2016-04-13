@@ -26,14 +26,6 @@ typedef struct
   short x, y;
 }coordinate;
 
-/* Struct to facilitate control of sprites on software */
-typedef struct 
-{
-  coordinate pos;
-  int id;
-  int vy;
-  int vx;
-}character;
 
 typedef struct 
 {
