@@ -2,7 +2,6 @@
 
 extern int line_length[3];
 extern sprite_info *ground[3];
-extern cordinate *occupied[16];
 
 void generate_ground (int line, int row)
 {            
@@ -103,34 +102,49 @@ void generate_ground (int line, int row)
     }
 }
 
-/*void move (character *c)
+void x_translation (character *c, character other)
 {
-    cordinate *p = occupied[0];
     int collision = 0;
     
-    while (p++)
+    // Checking collision
+
+    // If sprites have pixels on the same line
+    if (((other.pos.y + OFFSET <= c->pos.y + OFFSET) &&
+        (other.pos.y + OFFSET >= c->pos.y - OFFSET)) ||
+        ((other.pos.y - OFFSET <= c->pos.y + OFFSET) &&
+        (other.pos.y - OFFSET >= c->pos.y - OFFSET)))
     {
-        // Checking collision
-
-        // If sprites have pixels on the same line
-        if (((p->pos.y + OFFSET <= c->pos.y + OFFSET) &&
-            (p->pos.y + OFFSET >= c->pos.y - OFFSET)) ||
-            ((p->pos.y - OFFSET <= c->pos.y + OFFSET) &&
-            (p->pos.y - OFFSET >= c->pos.y - OFFSET)))
+        // Check collision in case of negative speed
+        if (c->vx < 0)
         {
-            // 
-            if (c->vx < 0)
+            if (other.pos.x < c->pos.x - OFFSET)
             {
-                if (p->pos.x < c->pos.x - OFFSET)
-                {
+                collision = (other.pos.x >= c->pos.x + c->vx - OFFSET);
 
+                if (collision)
+                {
+                    c->pos.x = other.pos.x + 1;
+                }
+
+            }
+        }
+
+        // Check collision in case of positive speed
+        if (c->vx > 0)
+        {
+            if (other.pos.x > c->pos.x - OFFSET)
+            {
+                collision = (other.pos.x <= c->pos.x + c->vx - OFFSET);
+
+                if (collision)
+                {
+                    c->pos.x = other.pos.x - 1;
                 }
             }
         }
     }
-
     if (!collision)
     {
         c->pos.x += c->vx;
     }
-}*/
+}

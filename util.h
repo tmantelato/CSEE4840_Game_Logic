@@ -6,13 +6,15 @@
 #include "vga_led.h"
 
 // Shapes
-#define GROUND 0
+#define GROUND 3
 #define GP_STAND 10
-#define GM_STAND 12
+#define GP_JUMP 0
+#define GM_STAND 11
+#define GM_JUMP 1
 
-// ID: range from 8 - 15 (% 8 when assigning to sprite_info)
-#define GP_ID 8
-#define GM_ID 9
+// ID for OBJECTS' layer
+#define GP_ID 0
+#define GM_ID 1
 
 // Layers
 #define SCENARIO 0
@@ -28,19 +30,20 @@
 /* Struct to facilitate control of sprites on software */
 typedef struct 
 {
-  cordinate pos;
+  coordinate pos;
   int id;
   int vy;
   int vx;
+  int jumping;
 }character;
 
 /* Generates platforms in the given line, allocating the memory according to 
    the given row */
 void generate_ground (int, int);
 
-/* Try to move the character received by parameter handling the necessary
-   collisions */
-void move (character *);
+/* Try to move the character received by parameter handling the collision if
+   necessary */
+void x_translation (character *, character);
 
 
 

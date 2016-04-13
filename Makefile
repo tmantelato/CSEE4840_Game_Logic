@@ -2,31 +2,31 @@ CC = gcc
 CFLAGS = -g -Wall
 LDFLAGS = -g
 
-ifneq (${KERNELRELEASE},)
+# ifneq (${KERNELRELEASE},)
 
-# KERNELRELEASE defined: we are being compiled as part of the Kernel
-        obj-m := vga_led.o
+## KERNELRELEASE defined: we are being compiled as part of the Kernel
+        #obj-m := vga_led.o
 
-else
+#else
 
-# We are being compiled as a module: use the Kernel build system
+## We are being compiled as a module: use the Kernel build system
 
-	KERNEL_SOURCE := /usr/src/linux
-        PWD := $(shell pwd)
+	#KERNEL_SOURCE := /usr/src/linux
+        #PWD := $(shell pwd)
 
-default: module game
+#default: module game
 
-module:
-	${MAKE} -C ${KERNEL_SOURCE} SUBDIRS=${PWD} modules
+#module:
+	#${MAKE} -C ${KERNEL_SOURCE} SUBDIRS=${PWD} modules
 
-clean:
-	${MAKE} -C ${KERNEL_SOURCE} SUBDIRS=${PWD} clean
-	${RM} game
+#clean:
+	#${MAKE} -C ${KERNEL_SOURCE} SUBDIRS=${PWD} clean
+	#${RM} game
 
-socfpga.dtb : socfpga.dtb
-	dtc -O dtb -o socfpga.dtb socfpga.dts
+#socfpga.dtb : socfpga.dtb
+	#dtc -O dtb -o socfpga.dtb socfpga.dts
 
-endif 
+#endif
 
 game: util.o
 

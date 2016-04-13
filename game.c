@@ -32,7 +32,6 @@ int vga_led_fd;
 
 sprite_info *ground[3];
 int line_length[3] = { -1, -1, -1 };
-cordinate *occupied[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 void write_info(sprite_info sprite, screen background)
 {
@@ -90,8 +89,8 @@ int main()
     sprite_info grandpa_sprite;
     grandpa_sprite.pos.y = 120;
     grandpa_sprite.pos.x = 310;
-    grandpa_sprite.shape = GP_STAND;
-    grandpa_sprite.id = GP_ID % 8;
+    grandpa_sprite.shape = GP_JUMP;
+    grandpa_sprite.id = GP_ID;
     grandpa_sprite.count = 0;
     grandpa_sprite.layer = OBJECTS;
     grandpa_sprite.orientation = RIGHT;
@@ -100,8 +99,8 @@ int main()
     sprite_info grandma_sprite;
     grandma_sprite.pos.y = 120;
     grandma_sprite.pos.x = 330;
-    grandma_sprite.shape = GM_STAND;
-    grandma_sprite.id = GM_ID % 8;
+    grandma_sprite.shape = GM_JUMP;
+    grandma_sprite.id = GM_ID;
     grandma_sprite.count = 0;
     grandma_sprite.layer = OBJECTS;
     grandma_sprite.orientation = LEFT;
@@ -122,21 +121,10 @@ int main()
     grandma.vx = 0;
     grandma.vy = 1;
 
-    // Initiating array of occupancy 
-    for (i = 0; i < 3; i++)
-    {
-        for (j = 0; j < line_length[i]; j++)
-        {
-            occupied[ground[i][j].id] = &(ground[i][j].pos);
-        }
-
-    }
-    occupied[grandpa.id] = &(grandpa.pos);
-    occupied[grandma.id] = &(grandma.pos);
-
-    int count_ground = 160;
+    int count_ground = 150;
     while (1)
     {   
+        // Line of platforms have a 160 pixels gap between one another
         if (count_ground == 160)
         {
             generate_ground(-8, row);
@@ -156,12 +144,14 @@ int main()
         }
 
         // User motion capture
-        //grandpa.vx = rand() % 20;
-        //grandma.vx = rand() % 20;
+        grandpa.vx = rand() % 5;
+        grandma.vx = rand() % 5;
 
         // Try to move grandpa
-        //move (&grandpa);
-        //move (&grandma);
+        x_translation (&grandpa, grandma);
+
+        // Try to move grandma
+        x_translation (&grandma, grandpa);
 
 
 
