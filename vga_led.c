@@ -43,16 +43,17 @@ static void write_screen(sprite_info sprite, screen background) {
   	uint32_t spr, bgnd;
   	spr = 0;
   	bgnd = 0;
-  	spr = (((unsigned int)sprite.sprite_x) & 0x3ff) |
-  			 ((((unsigned int)sprite.sprite_y) & 0x3ff) << 10) | 
-  			 ((((unsigned int)sprite.shape) & 0xf) << 20) | 
-  			 ((((unsigned int)sprite.count) & 0xf) << 24) | 
-  			 ((((unsigned int)sprite.layer) & 0x7) << 28);
+  	spr = (((unsigned int)sprite.coordinate.x) & 0x3ff) |
+  			 ((((unsigned int)sprite.coordinate.y) & 0x3ff) << 10) | 
+  			 ((((unsigned int)sprite.shape) & 0xf) << 20) |
+         ((((unsigned int)sprite.orientation) & 0x1) << 24) |
+  			 ((((unsigned int)sprite.count) & 0x7) << 25) |
+         ((((unsigned int)sprite.id) & 0x7) << 28) |
+  			 ((((unsigned int)sprite.layer) & 0x1) << 31);
  	
  	bgnd = (((unsigned int)background.life_1) & 0xf) |
  	       ((((unsigned int)background.life_2) & 0xf) << 4) |
   	       (((background.background_color) & 0xffffff) << 8);
-
 
   	WRITE_BYTE(screen_registers + 0, spr);
   	WRITE_BYTE(screen_registers + 4, bgnd);

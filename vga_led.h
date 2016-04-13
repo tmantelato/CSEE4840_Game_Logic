@@ -24,12 +24,12 @@
 typedef struct
 {
   short x, y;
-}cordinate;
+}coordinate;
 
 /* Struct to facilitate control of sprites on software */
 typedef struct 
 {
-  cordinate pos;
+  coordinate pos;
   int id;
   int vy;
   int vx;
@@ -37,13 +37,14 @@ typedef struct
 
 typedef struct 
 {
-  unsigned char id;
-  cordinate pos;
+  coordinate pos;
 	unsigned char shape;
+  unsigned char orientation;
 	unsigned char count;
+  unsigned char id;
 	unsigned char layer;
-  unsigned char orientation;	
 } sprite_info;
+
 
 typedef struct
 {
