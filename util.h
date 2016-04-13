@@ -25,6 +25,15 @@
 // Offset from center
 #define OFFSET 16
 
+/* Struct to facilitate control of sprites on software */
+typedef struct 
+{
+  cordinate pos;
+  int id;
+  int vy;
+  int vx;
+}character;
+
 /* Generates platforms in the given line, allocating the memory according to 
    the given row */
 void generate_ground (int, int);
