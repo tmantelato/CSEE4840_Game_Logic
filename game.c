@@ -32,6 +32,7 @@ int vga_led_fd;
 
 sprite_info *ground[3];
 int line_length[3] = { -1, -1, -1 };
+cordinate *occupied[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 void write_info(sprite_info sprite, screen background)
 {
@@ -86,26 +87,85 @@ int main()
     }
 
     // Setting grandpa and grandma starting positions
-    sprite_info grandpa;
-    grandpa.sprite_y = 120;
-    grandpa.sprite_x = 310;
-    grandpa.shape = GP_STAND;
+    sprite_info grandpa_sprite;
+    grandpa_sprite.pos.y = 120;
+    grandpa_sprite.pos.x = 310;
+    grandpa_sprite.shape = GP_STAND;
+    grandpa_sprite.id = GP_ID % 8;
+    grandpa_sprite.count = 0;
+    grandpa_sprite.layer = OBJECTS;
+    grandpa_sprite.orientation = RIGHT;
+    write_info(grandpa_sprite, back);
+
+    sprite_info grandma_sprite;
+    grandma_sprite.pos.y = 120;
+    grandma_sprite.pos.x = 330;
+    grandma_sprite.shape = GM_STAND;
+    grandma_sprite.id = GM_ID % 8;
+    grandma_sprite.count = 0;
+    grandma_sprite.layer = OBJECTS;
+    grandma_sprite.orientation = LEFT;
+    write_info(grandma_sprite, back);
+
+    // Creating characters structures
+    character grandpa;
+    grandpa.pos.x = grandpa_sprite.pos.x;
+    grandpa.pos.y = grandpa_sprite.pos.y;
     grandpa.id = GP_ID;
-    grandpa.count = 0;
-    grandpa.layer = OBJECTS;
-    grandpa.orientation = RIGHT;
+    grandpa.vx = 0;
+    grandpa.vy = 1;
 
-    sprite_info grandma;
-    grandma.sprite_y = 120;
-    grandma.sprite_x = 330;
-    grandma.shape = GM_STAND;
+    character grandma;
+    grandma.pos.x = grandma_sprite.pos.x;
+    grandma.pos.y = grandma_sprite.pos.y;
     grandma.id = GM_ID;
-    grandma.count = 0;
-    grandma.layer = OBJECTS;
-    grandma.orientation = LEFT;
+    grandma.vx = 0;
+    grandma.vy = 1;
 
-    while (1)
+    // Initiating array of occupancy 
+    for (i = 0; i < 3; i++)
     {
+        for (j = 0; j < line_length[i]; j++)
+        {
+            occupied[ground[i][j].id] = &(ground[i][j].pos);
+        }
+
+    }
+    occupied[grandpa.id] = &(grandpa.pos);
+    occupied[grandma.id] = &(grandma.pos);
+
+    int count_ground = 160;
+    while (1)
+    {   
+        if (count_ground == 160)
+        {
+            generate_ground(-8, row);
+            row = (row + 1) % 3; 
+            count_ground = 0;
+        }
+        count_ground++;
+
+        // Moves all platforms one pixel down
+        int i, j;
+        for (i = 0; i < 3; i++)
+        {
+            for (j = 0; j < line_length[i]; j++)
+            {
+                ground[i][j].pos.y += 1;
+            }
+        }
+
+        // User motion capture
+        //grandpa.vx = rand() % 20;
+        //grandma.vx = rand() % 20;
+
+        // Try to move grandpa
+        //move (&grandpa);
+        //move (&grandma);
+
+
+
+
         while(pause)
         {
             // ### if y movement ###

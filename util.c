@@ -2,6 +2,7 @@
 
 extern int line_length[3];
 extern sprite_info *ground[3];
+extern cordinate *occupied[16];
 
 void generate_ground (int line, int row)
 {            
@@ -57,7 +58,7 @@ void generate_ground (int line, int row)
     for (j = 0; j < line_length[row]; j++)
     {
         ground[row][j].shape = GROUND;
-        ground[row][j].sprite_y = line;
+        ground[row][j].pos.y = line;
         ground[row][j].layer = SCENARIO;
         ground[row][j].orientation = RIGHT;
 
@@ -83,24 +84,53 @@ void generate_ground (int line, int row)
         if (length_chance < 10)
         {     
             ground[row][j].count = 5;
-
-            ground[row][j].sprite_x = 
+            ground[row][j].pos.x =
                 (rand() % (dx - ground[row][j].count)) + begin;
 
         }
         else if (length_chance < 18)
         {
             ground[row][j].count = 4;
-
-            ground[row][j].sprite_x = 
+            ground[row][j].pos.x =
                 (rand() % (dx - ground[row][j].count)) + begin;
         }
         else
         {
             ground[row][j].count = 3;
-
-            ground[row][j].sprite_x = 
+            ground[row][j].pos.x =
                 (rand() % (dx - ground[row][j].count)) + begin;
         }
     }
 }
+
+/*void move (character *c)
+{
+    cordinate *p = occupied[0];
+    int collision = 0;
+    
+    while (p++)
+    {
+        // Checking collision
+
+        // If sprites have pixels on the same line
+        if (((p->pos.y + OFFSET <= c->pos.y + OFFSET) &&
+            (p->pos.y + OFFSET >= c->pos.y - OFFSET)) ||
+            ((p->pos.y - OFFSET <= c->pos.y + OFFSET) &&
+            (p->pos.y - OFFSET >= c->pos.y - OFFSET)))
+        {
+            // 
+            if (c->vx < 0)
+            {
+                if (p->pos.x < c->pos.x - OFFSET)
+                {
+
+                }
+            }
+        }
+    }
+
+    if (!collision)
+    {
+        c->pos.x += c->vx;
+    }
+}*/

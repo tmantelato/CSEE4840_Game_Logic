@@ -10,9 +10,9 @@
 #define GP_STAND 10
 #define GM_STAND 12
 
-// ID
-#define GP_ID 0
-#define GM_ID 1
+// ID: range from 8 - 15 (% 8 when assigning to sprite_info)
+#define GP_ID 8
+#define GM_ID 9
 
 // Layers
 #define SCENARIO 0
@@ -22,17 +22,16 @@
 #define RIGHT 0
 #define LEFT  1
 
+// Offset from center
+#define OFFSET 16
+
 /* Generates platforms in the given line, allocating the memory according to 
    the given row */
 void generate_ground (int, int);
 
-/* Receives the x translation and returns the valid resulting sprite location.
-   (Called only for the characters) */
-void translation (int *);
-
-/* Receives the next (x,y) location for the sprite and generates a transition
-   to that point. */
-void transition (sprite_info *, int);
+/* Try to move the character received by parameter handling the necessary
+   collisions */
+void move (character *);
 
 
 

@@ -21,21 +21,34 @@
 
 #include <linux/ioctl.h>
 
+typedef struct
+{
+  short x, y;
+}cordinate;
+
+/* Struct to facilitate control of sprites on software */
+typedef struct 
+{
+  cordinate pos;
+  int id;
+  int vy;
+  int vx;
+}character;
 
 typedef struct 
 {
-    unsigned char id;
-	short sprite_x, sprite_y;
-  	unsigned char shape;
-  	unsigned char count;
-  	unsigned char layer;
-    unsigned char orientation;	
+  unsigned char id;
+  cordinate pos;
+	unsigned char shape;
+	unsigned char count;
+	unsigned char layer;
+  unsigned char orientation;	
 } sprite_info;
 
 typedef struct
 {
 	unsigned char life_1, life_2;
-  	unsigned int background_color;	
+	unsigned int background_color;	
 } screen;
 
 typedef struct
