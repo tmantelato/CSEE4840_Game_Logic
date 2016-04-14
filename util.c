@@ -1,16 +1,42 @@
 #include "util.h"
 
+extern int vga_led_fd;
 extern int line_length[3];
 extern sprite_info *ground[3];
 
+void write_info(sprite_info sprite, screen background)
+{
+    vga_screen_arg_t screen_game;
+    screen_game.sprite = sprite;
+    screen_game.background = background;
+    if (ioctl(vga_led_fd, VGA_LED_WRITE_DIGIT, &screen_game))
+    {
+        perror("ioctl(VGA_LED_WRITE_DIGIT) failed");
+        return;
+    }
+}
+
 void generate_ground (int line, int row)
 {            
+
+    screen back;
+    back.life_1 = 2;
+    back.life_2 = 2;
+    back.background_color = 0x152050;
+
     // 3 blocks = 50% chance
     // 2 blocks = 40% chance 
     // 1 block  = 10% chance
 
     if (line_length[row] != -1)
-    {
+    {   
+        int j;
+        for (j = 0; j < line_length[row]; j++)
+        {
+            ground[row][j].count = 0;
+            write_info(ground[row][j], back);
+            
+        }
         free(ground[row]);
     }
 
@@ -109,21 +135,21 @@ void x_translation (character *c, character other)
     // Checking collision
 
     // If sprites have pixels on the same line
-    if (((other.pos.y + OFFSET <= c->pos.y + OFFSET) &&
-        (other.pos.y + OFFSET >= c->pos.y - OFFSET)) ||
-        ((other.pos.y - OFFSET <= c->pos.y + OFFSET) &&
-        (other.pos.y - OFFSET >= c->pos.y - OFFSET)))
+    if (((other.pos->y + OFFSET <= c->pos->y + OFFSET) &&
+        (other.pos->y + OFFSET >= c->pos->y - OFFSET)) ||
+        ((other.pos->y - OFFSET <= c->pos->y + OFFSET) &&
+        (other.pos->y - OFFSET >= c->pos->y - OFFSET)))
     {
         // Check collision in case of negative speed
         if (c->vx < 0)
         {
-            if (other.pos.x < c->pos.x - OFFSET)
+            if (other.pos->x + OFFSET < c->pos->x - OFFSET)
             {
-                collision = (other.pos.x >= c->pos.x + c->vx - OFFSET);
+                collision = (other.pos->x + OFFSET >= c->pos->x + c->vx - OFFSET);
 
                 if (collision)
                 {
-                    c->pos.x = other.pos.x + 1;
+                    c->pos->x = other.pos->x + OFFSET + 1;
                 }
 
             }
@@ -132,19 +158,19 @@ void x_translation (character *c, character other)
         // Check collision in case of positive speed
         if (c->vx > 0)
         {
-            if (other.pos.x > c->pos.x - OFFSET)
+            if (other.pos->x - OFFSET > c->pos->x + OFFSET)
             {
-                collision = (other.pos.x <= c->pos.x + c->vx - OFFSET);
+                collision = (other.pos->x - OFFSET <= c->pos->x + c->vx + OFFSET);
 
                 if (collision)
                 {
-                    c->pos.x = other.pos.x - 1;
+                    c->pos->x = other.pos->x - OFFSET - 1;
                 }
             }
         }
     }
     if (!collision)
     {
-        c->pos.x += c->vx;
+        c->pos->x += c->vx;
     }
 }

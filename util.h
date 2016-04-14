@@ -3,7 +3,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 #include "vga_led.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+#include <unistd.h>
 
 // Shapes
 #define GROUND 3
@@ -30,20 +36,32 @@
 /* Struct to facilitate control of sprites on software */
 typedef struct 
 {
-  coordinate pos;
-  int id;
-  int vy;
-  int vx;
-  int jumping;
+    coordinate *pos;
+    int id;
+    int vy;
+    int vx;
+    int jumping;
 }character;
+
+typedef struct 
+{
+
+}platform;
+
+/* Sends information to the driver through the ioctl call */
+void write_info(sprite_info, screen);
 
 /* Generates platforms in the given line, allocating the memory according to 
    the given row */
 void generate_ground (int, int);
 
-/* Try to move the character received by parameter handling the collision if
-   necessary */
+/* Try to move the character received by parameter in the x axis handling the 
+   collision if necessary */
 void x_translation (character *, character);
+
+/* Try to move the character received by parameter in the y axis handling the 
+   collision if necessary */
+void y_translation (character *, character, sprite_info);
 
 
 

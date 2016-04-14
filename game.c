@@ -19,31 +19,11 @@
  *
  */
 
-#include "vga_led.h"
 #include "util.h"
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
 
 int vga_led_fd;
-
 sprite_info *ground[3];
 int line_length[3] = { -1, -1, -1 };
-
-void write_info(sprite_info sprite, screen background)
-{
-    vga_screen_arg_t screen_game;
-    screen_game.sprite = sprite;
-    screen_game.background = background;
-    if (ioctl(vga_led_fd, VGA_LED_WRITE_DIGIT, &screen_game))
-    {
-        perror("ioctl(VGA_LED_WRITE_DIGIT) failed");
-        return;
-    }
-}
 
 int main()
 {
@@ -88,7 +68,7 @@ int main()
     // Setting grandpa and grandma starting positions
     sprite_info grandpa_sprite;
     grandpa_sprite.pos.y = 120;
-    grandpa_sprite.pos.x = 310;
+    grandpa_sprite.pos.x = 300;
     grandpa_sprite.shape = GP_JUMP;
     grandpa_sprite.id = GP_ID;
     grandpa_sprite.count = 0;
@@ -108,15 +88,13 @@ int main()
 
     // Creating characters structures
     character grandpa;
-    grandpa.pos.x = grandpa_sprite.pos.x;
-    grandpa.pos.y = grandpa_sprite.pos.y;
+    grandpa.pos = &(grandpa_sprite.pos);
     grandpa.id = GP_ID;
     grandpa.vx = 0;
     grandpa.vy = 1;
 
     character grandma;
-    grandma.pos.x = grandma_sprite.pos.x;
-    grandma.pos.y = grandma_sprite.pos.y;
+    grandma.pos = &(grandma_sprite.pos);
     grandma.id = GM_ID;
     grandma.vx = 0;
     grandma.vy = 1;
@@ -143,28 +121,40 @@ int main()
             }
         }
 
+        // Writing to drivers
+        for (i = 0; i < 3; i++)
+        {
+            for (j = 0; j < line_length[i]; j++)
+            {
+                write_info(ground[i][j], back);
+            }
+        }
+
         // User motion capture
-        grandpa.vx = rand() % 5;
-        grandma.vx = rand() % 5;
+        grandpa.vx = 1;
+        grandma.vx = -1;
 
         // Try to move grandpa
         x_translation (&grandpa, grandma);
+        write_info(grandpa_sprite, back);
 
         // Try to move grandma
         x_translation (&grandma, grandpa);
+        write_info(grandma_sprite, back);
+
+
+        usleep(30000);
 
 
 
-
-        while(pause)
+        /*while(pause)
         {
             // ### if y movement ###
             pause = 0;
-        }
+        }*/
 
 
     }
-
 
     return 0;
 }
