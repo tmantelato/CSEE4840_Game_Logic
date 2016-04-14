@@ -50,9 +50,9 @@ int main()
     int pause = 1;
 
     // Generating start ground
-    generate_ground(0, row++);
-    generate_ground(160, row++);
     generate_ground(320, row++);
+    generate_ground(160, row++);
+    generate_ground(0, row++);
     row = 0;
 
     // Writing to driver
@@ -68,10 +68,10 @@ int main()
     // Setting grandpa and grandma starting positions
     sprite_info grandpa_sprite;
     grandpa_sprite.pos.y = 120;
-    grandpa_sprite.pos.x = 300;
-    grandpa_sprite.shape = GP_JUMP;
+    grandpa_sprite.pos.x = 200;
+    grandpa_sprite.shape = GP_STAND;
     grandpa_sprite.id = GP_ID;
-    grandpa_sprite.count = 0;
+    grandpa_sprite.count = 1;
     grandpa_sprite.layer = OBJECTS;
     grandpa_sprite.orientation = RIGHT;
     write_info(grandpa_sprite, back);
@@ -79,9 +79,9 @@ int main()
     sprite_info grandma_sprite;
     grandma_sprite.pos.y = 120;
     grandma_sprite.pos.x = 330;
-    grandma_sprite.shape = GM_JUMP;
+    grandma_sprite.shape = GM_STAND;
     grandma_sprite.id = GM_ID;
-    grandma_sprite.count = 0;
+    grandma_sprite.count = 1;
     grandma_sprite.layer = OBJECTS;
     grandma_sprite.orientation = LEFT;
     write_info(grandma_sprite, back);
@@ -99,7 +99,7 @@ int main()
     grandma.vx = 0;
     grandma.vy = 1;
 
-    int count_ground = 150;
+    int count_ground = 0;
     while (1)
     {   
         // Line of platforms have a 160 pixels gap between one another
