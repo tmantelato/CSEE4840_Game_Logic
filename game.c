@@ -22,7 +22,7 @@
 #include "util.h"
 
 int vga_led_fd;
-sprite_info *ground[3];
+sprite_info ground[3][3];
 int line_length[3] = { -1, -1, -1 };
 
 int main()
@@ -133,19 +133,20 @@ int main()
         // User motion capture
         grandpa.vx = 1;
         grandma.vx = -1;
+        grandpa.vy = 1;
+        grandma.vy = -1;
 
         // Try to move grandpa
         x_translation (&grandpa, grandma);
+        y_translation (&grandpa, grandma);
         write_info(grandpa_sprite, back);
 
         // Try to move grandma
         x_translation (&grandma, grandpa);
+        y_translation (&grandma, grandpa);
         write_info(grandma_sprite, back);
 
-
         usleep(30000);
-
-
 
         /*while(pause)
         {

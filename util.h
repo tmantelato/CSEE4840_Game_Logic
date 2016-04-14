@@ -43,11 +43,6 @@ typedef struct
     int jumping;
 }character;
 
-typedef struct 
-{
-
-}platform;
-
 /* Sends information to the driver through the ioctl call */
 void write_info(sprite_info, screen);
 
@@ -61,7 +56,7 @@ void x_translation (character *, character);
 
 /* Try to move the character received by parameter in the y axis handling the 
    collision if necessary */
-void y_translation (character *, character, sprite_info);
+void y_translation (character *, character);
 
 
 

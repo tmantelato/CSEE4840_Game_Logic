@@ -2,7 +2,7 @@
 
 extern int vga_led_fd;
 extern int line_length[3];
-extern sprite_info *ground[3];
+extern sprite_info ground[3][3];
 
 void write_info(sprite_info sprite, screen background)
 {
@@ -37,7 +37,6 @@ void generate_ground (int line, int row)
             write_info(ground[row][j], back);
             
         }
-        free(ground[row]);
     }
 
     int blocks_chance = rand() % 20;
@@ -53,23 +52,19 @@ void generate_ground (int line, int row)
 
         if (sum == 6)
         {
-            ground[row] = (sprite_info *) malloc (2 * sizeof(sprite_info));
             line_length[row] = 2;
         }
         else
         {
-            ground[row] = (sprite_info *) malloc (3 * sizeof(sprite_info));
             line_length[row] = 3;
         }
     }
     else if (blocks_chance < 18)
     {
-        ground[row] = (sprite_info *) malloc (2 * sizeof(sprite_info));
         line_length[row] = 2;
     }
     else
     {
-        ground[row] = (sprite_info *) malloc (1 * sizeof(sprite_info));
         line_length[row] = 1;
     }
 
@@ -149,7 +144,8 @@ void x_translation (character *c, character other)
 
                 if (collision)
                 {
-                    c->pos->x = other.pos->x + OFFSET + 1;
+                    c->pos->x = other.pos->x + 2 * OFFSET + 1;
+                    return;
                 }
 
             }
@@ -164,13 +160,97 @@ void x_translation (character *c, character other)
 
                 if (collision)
                 {
-                    c->pos->x = other.pos->x - OFFSET - 1;
+                    c->pos->x = other.pos->x - 2 * OFFSET - 1;
+                    return;
                 }
             }
         }
     }
-    if (!collision)
+    
+    // No collision
+    c->pos->x += c->vx;
+}
+
+void y_translation (character *c, character other)
+{
+    int collision = 0;
+    int first_collision;
+    
+    // Checking collision
+
+    // If the other character has pixels on the same column
+    if (((other.pos->x + OFFSET <= c->pos->x + OFFSET) &&
+        (other.pos->x + OFFSET >= c->pos->x - OFFSET)) ||
+        ((other.pos->x - OFFSET <= c->pos->x + OFFSET) &&
+        (other.pos->x - OFFSET >= c->pos->x - OFFSET)))
     {
-        c->pos->x += c->vx;
+        // Check collision in case of negative speed (jump)
+        if (c->vy < 0)
+        {
+            if (other.pos->y + OFFSET < c->pos->y - OFFSET)
+            {
+                collision = (other.pos->y + OFFSET >= c->pos->y + c->vy - OFFSET);
+
+                if (collision)
+                {
+                    c->pos->y = other.pos->y + 2 * OFFSET + 1;
+                    return;
+                }
+
+            }
+        }
+
+        // Check collision in case of positive speed (fall)
+        if (c->vy > 0)
+        {
+            if (other.pos->y - OFFSET > c->pos->y + OFFSET)
+            {
+                collision = (other.pos->y - OFFSET <= c->pos->y + c->vy + OFFSET);
+
+                if (collision)
+                {
+                    first_collision = other.pos->y - 2 * OFFSET - 1;
+                    c->jumping = 0;
+                }
+            }
+        }
     }
+
+    // Check for platform collision (only fall apply)
+    if (c->vy > 0)
+    {
+        int i, j;
+        for (i = 0; i < 3; i++)
+        {
+            for (j = 0; j < line_length[i]; j++)
+            {
+                // Checking if it's in the same column
+                if ((c->pos->x + OFFSET > ground[i][j].pos.x - OFFSET) &&
+                    (c->pos->x - OFFSET < ground[i][j].pos.x + 
+                        2 * ground[i][j].count * OFFSET - OFFSET))
+                {
+                    if (c->pos->y  + OFFSET < ground[i][j].pos.y - OFFSET)
+                    {
+                        int collision2 = (c->pos->y + c->vy + OFFSET >= 
+                            ground[i][j].pos.y - OFFSET);
+
+                        if (collision2)
+                        {
+                            int second_collision = ground[i][j].pos.y - 2 * OFFSET - 1;
+                            if (collision)
+                            {
+                                c->pos->y = first_collision < second_collision ?
+                                    first_collision : second_collision;
+                                c->jumping = 0;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // No collision
+    c->pos->y += c->vy;
 }
