@@ -4,11 +4,37 @@ extern int vga_led_fd;
 extern int line_length[3];
 extern sprite_info ground[3][3];
 
+
+void write_sprite(sprite_info sprite)
+{
+    vga_screen_arg_t screen_game;
+    screen_game.sprite = sprite;
+    screen_game.option = SPRITE;
+    if (ioctl(vga_led_fd, VGA_LED_WRITE_DIGIT, &screen_game))
+    {
+        perror("ioctl(VGA_LED_WRITE_DIGIT) failed");
+        return;
+    }
+}
+
+void write_screen(screen background)
+{
+    vga_screen_arg_t screen_game;
+    screen_game.background = background;
+    screen_game.option = BACK;
+    if (ioctl(vga_led_fd, VGA_LED_WRITE_DIGIT, &screen_game))
+    {
+        perror("ioctl(VGA_LED_WRITE_DIGIT) failed");
+        return;
+    }
+}
+
 void write_info(sprite_info sprite, screen background)
 {
     vga_screen_arg_t screen_game;
     screen_game.sprite = sprite;
     screen_game.background = background;
+    screen_game.option = BOTH;
     if (ioctl(vga_led_fd, VGA_LED_WRITE_DIGIT, &screen_game))
     {
         perror("ioctl(VGA_LED_WRITE_DIGIT) failed");
