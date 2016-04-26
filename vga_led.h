@@ -26,17 +26,15 @@ typedef struct
   short x, y;
 }coordinate;
 
-
 typedef struct 
 {
-  coordinate pos;
-	unsigned char shape;
-  unsigned char orientation;
-	unsigned char count;
-  unsigned char id;
-	unsigned char layer;
+    coordinate pos;
+    unsigned char shape;
+    unsigned char orientation;
+    unsigned char count;
+    unsigned char id;
+    unsigned char layer;
 } sprite_info;
-
 
 typedef struct
 {
@@ -48,7 +46,6 @@ typedef struct
 {
 	sprite_info sprite;
 	screen background;
-	char option;
 } vga_screen_arg_t;
 
 

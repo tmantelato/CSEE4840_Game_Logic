@@ -22,6 +22,7 @@
 #include "util.h"
 
 int vga_led_fd;
+screen back;
 sprite_info ground[3][3];
 int line_length[3] = { -1, -1, -1 };
 
@@ -37,25 +38,28 @@ int main()
         return -1;
     }
 
-    int row = 0;        // The next row of ground to be generated
+    // Seeding srand
+    srand(time(NULL));
 
-    screen back;
+    // Cleaning sprites
+    clean();
+
+    //int pause = 1;
+
+    // Generating background
     back.life_1 = 2;
     back.life_2 = 2;
     back.background_color = 0x152050;
   
 
-    printf("GAME TEST Userspace program terminating\n");
-
-    int pause = 1;
-
     // Generating start ground
+    int row = 0;                    // The next row of ground to be generated
     generate_ground(320, row++);
     generate_ground(160, row++);
     generate_ground(0, row++);
     row = 0;
 
-    // Writing to driver
+    // Writing ground driver
     int i, j;
     for (i = 0; i < 3; i++)
     {
@@ -67,7 +71,7 @@ int main()
 
     // Setting grandpa and grandma starting positions
     sprite_info grandpa_sprite;
-    grandpa_sprite.pos.y = 120;
+    grandpa_sprite.pos.y = 200;
     grandpa_sprite.pos.x = 200;
     grandpa_sprite.shape = GP_STAND;
     grandpa_sprite.id = GP_ID;
@@ -77,8 +81,8 @@ int main()
     write_info(grandpa_sprite, back);
 
     sprite_info grandma_sprite;
-    grandma_sprite.pos.y = 120;
-    grandma_sprite.pos.x = 330;
+    grandma_sprite.pos.y = 200;
+    grandma_sprite.pos.x = 260;
     grandma_sprite.shape = GM_STAND;
     grandma_sprite.id = GM_ID;
     grandma_sprite.count = 1;
@@ -92,18 +96,20 @@ int main()
     grandpa.id = GP_ID;
     grandpa.vx = 0;
     grandpa.vy = 1;
+    grandpa.jumping = 0;
 
     character grandma;
     grandma.pos = &(grandma_sprite.pos);
     grandma.id = GM_ID;
     grandma.vx = 0;
     grandma.vy = 1;
+    grandma.jumping = 0;
 
     int count_ground = 0;
     while (1)
     {   
-        // Line of platforms have a 160 pixels gap between one another
-        if (count_ground == 160)
+        // Line of platforms have a 175 pixels gap between one another
+        if (count_ground == 35)
         {
             generate_ground(-8, row);
             row = (row + 1) % 3; 
@@ -111,13 +117,13 @@ int main()
         }
         count_ground++;
 
-        // Moves all platforms one pixel down
+        // Moves all platforms 5 pixels down
         int i, j;
         for (i = 0; i < 3; i++)
         {
             for (j = 0; j < line_length[i]; j++)
             {
-                ground[i][j].pos.y += 1;
+                ground[i][j].pos.y += 5;
             }
         }
 
@@ -131,21 +137,54 @@ int main()
         }
 
         // User motion capture
-        grandpa.vx = 1;
-        grandma.vx = -1;
-        grandpa.vy = 1;
-        grandma.vy = -1;
+        grandpa.vx = -1;
+        grandma.vx = 1;
+        //grandpa.vy = 1;
+        //grandma.vy = 1;
 
         // Try to move grandpa
         x_translation (&grandpa, grandma);
         y_translation (&grandpa, grandma);
+        
+
+        if (grandpa.jumping)        // Fall
+    	{
+    	    grandpa_sprite.shape = GP_JUMP;
+    	    grandpa.vy += 1;
+    	}
+        else                        // Jump
+    	{
+    	    grandpa_sprite.shape = GP_STAND;
+    	    //grandpa.jumping = 1;   
+            grandpa.vy = -13;
+    	}
+
         write_info(grandpa_sprite, back);
 
         // Try to move grandma
         x_translation (&grandma, grandpa);
         y_translation (&grandma, grandpa);
+        
+        if (grandma.jumping)        // Fall
+    	{
+    	    grandma_sprite.shape = GM_JUMP;
+     	    grandma.vy += 1;
+    	}
+        else                        // Jump
+    	{
+    	    grandma_sprite.shape = GM_STAND;
+    	    //grandma.jumping = 1;
+    	    grandma.vy = -13;
+    	}
+        
         write_info(grandma_sprite, back);
 
+    	// Check for end of game
+    	if (grandpa.pos->y >= 480 )
+    	   grandpa.pos->y = 200;
+        if (grandma.pos->y >= 480)
+    	   grandma.pos->y = 200;
+              
         usleep(30000);
 
         /*while(pause)
@@ -156,6 +195,8 @@ int main()
 
 
     }
+
+    printf("GAME TEST Userspace program terminating\n");
 
     return 0;
 }

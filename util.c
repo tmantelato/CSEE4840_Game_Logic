@@ -1,32 +1,31 @@
 #include "util.h"
 
 extern int vga_led_fd;
-extern int line_length[3];
+extern screen back;
 extern sprite_info ground[3][3];
+extern int line_length[3];
 
+void clean ()
+{ 
+    back.life_1 = 0;
+    back.life_2 = 0;
+    back.background_color = 0x152050;
+  
+    sprite_info cleaner;
+    cleaner.count = 0;
 
-void write_sprite(sprite_info sprite)
-{
-    vga_screen_arg_t screen_game;
-    screen_game.sprite = sprite;
-    screen_game.option = SPRITE;
-    if (ioctl(vga_led_fd, VGA_LED_WRITE_DIGIT, &screen_game))
+    int i, j;
+    for (i = 0; i < 2; i++)
     {
-        perror("ioctl(VGA_LED_WRITE_DIGIT) failed");
-        return;
-    }
-}
+        cleaner.layer = i;
 
-void write_screen(screen background)
-{
-    vga_screen_arg_t screen_game;
-    screen_game.background = background;
-    screen_game.option = BACK;
-    if (ioctl(vga_led_fd, VGA_LED_WRITE_DIGIT, &screen_game))
-    {
-        perror("ioctl(VGA_LED_WRITE_DIGIT) failed");
-        return;
+        for (j = 0; j < 8; j++)
+        {
+            cleaner.id = j; 
+            write_info(cleaner, back);
+        }
     }
+
 }
 
 void write_info(sprite_info sprite, screen background)
@@ -34,7 +33,6 @@ void write_info(sprite_info sprite, screen background)
     vga_screen_arg_t screen_game;
     screen_game.sprite = sprite;
     screen_game.background = background;
-    screen_game.option = BOTH;
     if (ioctl(vga_led_fd, VGA_LED_WRITE_DIGIT, &screen_game))
     {
         perror("ioctl(VGA_LED_WRITE_DIGIT) failed");
@@ -45,15 +43,7 @@ void write_info(sprite_info sprite, screen background)
 void generate_ground (int line, int row)
 {            
 
-    screen back;
-    back.life_1 = 2;
-    back.life_2 = 2;
-    back.background_color = 0x152050;
-
-    // 3 blocks = 50% chance
-    // 2 blocks = 40% chance 
-    // 1 block  = 10% chance
-
+    // Cleaning row to be used
     if (line_length[row] != -1)
     {   
         int j;
@@ -61,11 +51,13 @@ void generate_ground (int line, int row)
         {
             ground[row][j].count = 0;
             write_info(ground[row][j], back);
-            
         }
     }
 
     int blocks_chance = rand() % 20;
+    // 3 blocks = 50% chance
+    // 2 blocks = 40% chance 
+    // 1 block  = 10% chance
 
     if (blocks_chance < 10)
     {   
@@ -121,9 +113,9 @@ void generate_ground (int line, int row)
 
         int begin = dx * j + 8;                 // begin of curr. column
         
-        // 6 blocks long = 50% chance
-        // 5 blocks long = 40% chance
-        // 4 blocks long = 10% chance
+        // 5 blocks long = 50% chance
+        // 4 blocks long = 40% chance
+        // 3 blocks long = 10% chance
         
         int length_chance = rand() % 20;
 
@@ -195,6 +187,12 @@ void x_translation (character *c, character other)
     
     // No collision
     c->pos->x += c->vx;
+
+   // Checking borders condition
+   if (c->pos->x <= 0)
+	c->pos->x = 640 + c->pos->x;
+   if (c->pos->x >= 640)
+	c->pos->x = c->pos->x - 640;  
 }
 
 void y_translation (character *c, character other)
@@ -250,7 +248,7 @@ void y_translation (character *c, character other)
         {
             for (j = 0; j < line_length[i]; j++)
             {
-                // Checking if it's in the same column
+                // Checking if it's above one of the platforms
                 if ((c->pos->x + OFFSET > ground[i][j].pos.x - OFFSET) &&
                     (c->pos->x - OFFSET < ground[i][j].pos.x + 
                         2 * ground[i][j].count * OFFSET - OFFSET))
@@ -262,14 +260,19 @@ void y_translation (character *c, character other)
 
                         if (collision2)
                         {
+            			    c->jumping = 0;
+                            
                             int second_collision = ground[i][j].pos.y - 2 * OFFSET - 1;
+                            
                             if (collision)
                             {
                                 c->pos->y = first_collision < second_collision ?
                                     first_collision : second_collision;
-                                c->jumping = 0;
                                 return;
                             }
+                            
+                            c->pos->y = second_collision;
+            			    return;
                         }
                     }
                 }
@@ -279,4 +282,5 @@ void y_translation (character *c, character other)
 
     // No collision
     c->pos->y += c->vy;
+    c->jumping = 1;
 }

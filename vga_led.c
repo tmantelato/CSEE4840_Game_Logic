@@ -39,10 +39,11 @@ static void *screen_registers; /* Start of registers for LEDs */
 static sprite_info sp_info;
 static screen background_info;
 
-static void write_screen_sprite(sprite_info sprite) {
-  	unsigned int spr;
-  	
-    spr = (((unsigned int)sprite.pos.x) & 0x3ff) |
+static void write_screen(sprite_info sprite, screen background) {
+  	uint32_t spr, bgnd;
+  	spr = 0;
+  	bgnd = 0;
+  	spr = (((unsigned int)sprite.pos.x) & 0x3ff) |
   			 ((((unsigned int)sprite.pos.y) & 0x3ff) << 10) | 
   			 ((((unsigned int)sprite.shape) & 0xf) << 20) |
          ((((unsigned int)sprite.orientation) & 0x1) << 24) |
@@ -50,22 +51,15 @@ static void write_screen_sprite(sprite_info sprite) {
          ((((unsigned int)sprite.id) & 0x7) << 28) |
   			 ((((unsigned int)sprite.layer) & 0x1) << 31);
  	
+ 	bgnd = (((unsigned int)background.life_1) & 0xf) |
+ 	       ((((unsigned int)background.life_2) & 0xf) << 4) |
+  	       (((background.background_color) & 0xffffff) << 8);
+
   	WRITE_BYTE(screen_registers + 0, spr);
+  	WRITE_BYTE(screen_registers + 4, bgnd);
   	sp_info = sprite;
+  	background_info = background;
 }
-
-static void write_screen_back(screen background) {
-    unsigned int bgnd;
-    
-
-    bgnd =  (((unsigned int)background.life_1) & 0xf) |
-           ((((unsigned int)background.life_2) & 0xf) << 4) |
-           (((background.background_color) & 0xffffff) << 8);
-
-    WRITE_BYTE(screen_registers + 4, bgnd);
-    background_info = background;
-}
-
 
 static int my_open(struct inode *i, struct file *f) {
   return 0;
@@ -85,11 +79,8 @@ static long my_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
     if (copy_from_user(&vla, (vga_screen_arg_t *) arg, sizeof(vga_screen_arg_t)))
       return -EACCES;
 
-  	if(vla.option & 0x1)
-      write_screen_sprite(vla.sprite);
-    if(vla.option & 0x2)
-      write_screen_back(vla.background);
-
+  	
+    write_screen(vla.sprite, vla.background);
     break;
     
   case VGA_LED_READ_DIGIT:
