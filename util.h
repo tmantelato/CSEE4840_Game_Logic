@@ -55,6 +55,12 @@ void clean();
 /* Sends information to the driver through the ioctl call */
 void write_info(sprite_info, screen);
 
+/* Sends a sprite to the driver */
+void write_sprite(sprite_info);
+
+/* Sends background information to the driver */
+void write_screen(screen);
+
 /* Generates platforms in the given line, allocating the memory according to 
    the given row */
 void generate_ground (int, int);

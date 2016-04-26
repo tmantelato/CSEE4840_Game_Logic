@@ -76,7 +76,7 @@ void generate_ground (int line, int row)
         for (j = 0; j < line_length[row]; j++)
         {
             ground[row][j].count = 0;
-            write_info(ground[row][j], back);
+            write_sprite(ground[row][j]);
         }
     }
 

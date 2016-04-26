@@ -50,7 +50,9 @@ int main()
     back.life_1 = 2;
     back.life_2 = 2;
     back.background_color = 0x152050;
-  
+
+    // Printing the background 
+    write_screen(back)
 
     // Generating start ground
     int row = 0;                    // The next row of ground to be generated
@@ -65,7 +67,7 @@ int main()
     {
         for (j = 0; j < line_length[i]; j++)
         {
-            write_info(ground[i][j], back);
+            write_sprite(ground[i][j]);
         }
     }
 
@@ -78,7 +80,7 @@ int main()
     grandpa_sprite.count = 1;
     grandpa_sprite.layer = OBJECTS;
     grandpa_sprite.orientation = RIGHT;
-    write_info(grandpa_sprite, back);
+    write_sprite(grandpa_sprite);
 
     sprite_info grandma_sprite;
     grandma_sprite.pos.y = 200;
@@ -88,7 +90,7 @@ int main()
     grandma_sprite.count = 1;
     grandma_sprite.layer = OBJECTS;
     grandma_sprite.orientation = LEFT;
-    write_info(grandma_sprite, back);
+    write_sprite(grandma_sprite);
 
     // Creating characters structures
     character grandpa;
@@ -132,7 +134,7 @@ int main()
         {
             for (j = 0; j < line_length[i]; j++)
             {
-                write_info(ground[i][j], back);
+                write_sprite(ground[i][j]);
             }
         }
 
@@ -159,7 +161,7 @@ int main()
             grandpa.vy = -13;
     	}
 
-        write_info(grandpa_sprite, back);
+        write_sprite(grandpa_sprite);
 
         // Try to move grandma
         x_translation (&grandma, grandpa);
@@ -177,7 +179,7 @@ int main()
     	    grandma.vy = -13;
     	}
         
-        write_info(grandma_sprite, back);
+        write_sprite(grandma_sprite);
 
     	// Check for end of game
     	if (grandpa.pos->y >= 480 )
