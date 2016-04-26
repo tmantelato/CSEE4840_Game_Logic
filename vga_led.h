@@ -46,6 +46,7 @@ typedef struct
 {
 	sprite_info sprite;
 	screen background;
+	char option;
 } vga_screen_arg_t;
 
 

@@ -34,6 +34,11 @@
 // Offset from center
 #define OFFSET 16
 
+// Options for write
+#define SPRITE 1
+#define BACK 2
+#define BOTH 3
+
 /* Struct to facilitate control of sprites on software */
 typedef struct 
 {
