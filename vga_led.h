@@ -39,6 +39,7 @@ typedef struct
 typedef struct
 {
 	unsigned char life_1, life_2;
+    unsigned char choice;
 	unsigned int background_color;	
 } screen;
 

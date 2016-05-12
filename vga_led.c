@@ -43,14 +43,25 @@ static screen background_info;
 
 static void write_screen_sprite(sprite_info sprite) {
     unsigned int spr;
-    
-  	spr = (((unsigned int)sprite.pos.x) & 0x3ff) |
-  			 ((((unsigned int)sprite.pos.y) & 0x3ff) << 10) | 
+    if (sprite.layer ==  0){
+      spr = (((unsigned int)sprite.pos.x) & 0x3ff) |
+         ((((unsigned int)sprite.pos.y) & 0x3ff) << 10) | 
          ((((unsigned int)sprite.orientation) & 0x1) << 20) |
-  			 ((((unsigned int)sprite.count) & 0x7) << 21) |
+         ((((unsigned int)sprite.count) & 0x7) << 21) |
+         ((((unsigned int)sprite.id) & 0xf) << 24) |
+         ((((unsigned int)sprite.shape) & 0x7) << 28) |
+         ((((unsigned int)sprite.layer) & 0x1) << 31);
+    }
+    else{
+      spr = (((unsigned int)sprite.pos.x) & 0x3ff) |
+         ((((unsigned int)sprite.pos.y) & 0x3ff) << 10) | 
+         ((((unsigned int)sprite.orientation) & 0x1) << 20) |
+         ((((unsigned int)sprite.count) & 0x7) << 21) |
          ((((unsigned int)sprite.id) & 0x7) << 24) |
          ((((unsigned int)sprite.shape) & 0xf) << 27) |
-  			 ((((unsigned int)sprite.layer) & 0x1) << 31);
+         ((((unsigned int)sprite.layer) & 0x1) << 31);  
+    }
+  	
 
   	WRITE_BYTE(screen_registers + 0, spr);
   	sp_info = sprite;
@@ -60,8 +71,9 @@ static void write_screen_back(screen background) {
     unsigned int bgnd;
     
 
-    bgnd =  (((unsigned int)background.life_1) & 0xf) |
-           ((((unsigned int)background.life_2) & 0xf) << 4) |
+    bgnd =  (((unsigned int)background.life_1) & 0x7) |
+           ((((unsigned int)background.life_2) & 0x7) << 3) |
+           ((((unsigned int)background.choice) & 0x1) << 6) |
            (((background.background_color) & 0xffffff) << 8);
 
     WRITE_BYTE(screen_registers + 4, bgnd);
