@@ -55,13 +55,6 @@ typedef struct
     int speed;
 }character;
 
-/* Power-up structure */
-/*typedef struct
-{
-    coordinate *pos;
-    int speed;
-}power;*/
-
 /* Cleans the screen by erasing every sprite */
 void clean();
 
@@ -85,8 +78,6 @@ void x_translation (character *, character);
 /* Try to move the character received by parameter in the y axis handling the 
    collision if necessary */
 void y_translation (character *, character);
-
-
 
 #endif
 
