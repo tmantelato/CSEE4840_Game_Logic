@@ -56,11 +56,11 @@ typedef struct
 }character;
 
 /* Power-up structure */
-typedef struct
+/*typedef struct
 {
     coordinate *pos;
     int speed;
-}power;
+}power;*/
 
 /* Cleans the screen by erasing every sprite */
 void clean();

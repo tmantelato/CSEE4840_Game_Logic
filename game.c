@@ -47,9 +47,9 @@ int main()
     clean();
 
     // Generating background
-    back.life_1 = 2;
-    back.life_2 = 2;
-    back.choice = COLOR;
+    back.life_1 = 4;
+    back.life_2 = 4;
+    // back.choice = COLOR;
     back.background_color = 0xff0000;
 
     // Printing the background 
@@ -94,13 +94,13 @@ int main()
     write_sprite(grandma_sprite);
 
     // Setting power sprite info
-    power_sprite.pos.y = 40;
+    /*power_sprite.pos.y = 40;
     power_sprite.pos.x = 230;
     power_sprite.shape = GP_STAND;
     power_sprite.id = PW_ID;
     power_sprite.count = 0;
     power_sprite.layer = OBJECTS;
-    power_sprite.orientation = RIGHT;
+    power_sprite.orientation = RIGHT;*/
 
     // Creating characters structures
     character grandpa;
@@ -118,16 +118,16 @@ int main()
     grandma.jumping = 0;
 
     // Creating power_up structure
-    power pup;
+    /*power pup;
     pup.pos = &(power_sprite.pos);
-    pup.speed = 0;
+    pup.speed = 0;*/
 
     // Starting peripheric
     start_user_input();
 
     int count_ground = 0;
-    int count_power = 0;
-    int pup_timeout = 0;
+    //int count_power = 0;
+    //int pup_timeout = 0;
     while (1)
     {   
         // Line of platforms have a 175 pixels gap between one another
@@ -255,17 +255,19 @@ int main()
                 write_screen(back);
                 exit(1);
             }
+            write_screen(back);
     	    grandpa.pos->y = 20;
             write_sprite(grandpa_sprite);
         }
         if (grandma.pos->y >= 480)
         {
-            if (!(--back.life_1))
+            /*if (!(--back.life_1))
             {
                 back.choice = COLOR;
                 write_screen(back);
                 exit(1);
-            }
+            }*/
+            //write_screen(back);
             grandma.pos->y = 20;
             write_sprite(grandma_sprite);
         }
