@@ -4,7 +4,6 @@ extern int vga_led_fd;
 extern screen back;
 extern sprite_info ground[3][3];
 extern int line_length[3];
-//extern sprite_info power_sprite;
 
 void clean ()
 { 
@@ -171,51 +170,6 @@ void generate_ground (int line, int row)
 
 void x_translation (character *c, character other)
 {
-    /*// Checking for power-up
-
-    int found = 0;
-
-    if (((pw->pos->y + OFFSET <= c->pos->y + OFFSET) &&
-        (pw->pos->y + OFFSET >= c->pos->y - OFFSET)) ||
-        ((pw->pos->y - OFFSET <= c->pos->y + OFFSET) &&
-        (pw->pos->y - OFFSET >= c->pos->y - OFFSET)))
-    {
-        // Check collision in case of negative speed
-        if (c->vx < 0)
-        {
-            if (pw->pos->x + OFFSET < c->pos->x - OFFSET)
-            {
-                found = (pw->pos->x + OFFSET >= c->pos->x + c->vx - OFFSET);
-
-                if (found && pw->speed)
-                {
-                    c->speed = 4;
-                    pw->speed = 0;
-                    power_sprite.count = 0;
-                    write_sprite(power_sprite);
-                }
-
-            }
-        }
-
-        // Check collision in case of positive speed
-        if (c->vx > 0)
-        {
-            if (pw->pos->x - OFFSET > c->pos->x + OFFSET)
-            {
-                found = (pw->pos->x - OFFSET <= c->pos->x + c->vx + OFFSET);
-
-                if (found && pw->speed)
-                {
-                    c->speed = 4;
-                    pw->speed = 0;
-                    power_sprite.count = 0;
-                    write_sprite(power_sprite);
-                }
-            }
-        }
-    }*/
-
     int collision = 0;
     
     // Checking collision
@@ -271,51 +225,6 @@ void x_translation (character *c, character other)
 
 void y_translation (character *c, character other)
 {
-    /*int found = 0;
-
-    // Checkin for power up
-    // If the other character has pixels on the same column
-    if (((pw->pos->x + OFFSET <= c->pos->x + OFFSET) &&
-        (pw->pos->x + OFFSET >= c->pos->x - OFFSET)) ||
-        ((pw->pos->x - OFFSET <= c->pos->x + OFFSET) &&
-        (pw->pos->x - OFFSET >= c->pos->x - OFFSET)))
-    {
-        // Check found in case of negative speed (jump)
-        if (c->vy < 0)
-        {
-            if (pw->pos->y + OFFSET < c->pos->y - OFFSET)
-            {
-                found = (pw->pos->y + OFFSET >= c->pos->y + c->vy - OFFSET);
-
-                if (found && pw->speed)
-                {
-                    c->speed = 4;
-                    pw->speed = 0;
-                    power_sprite.count = 0;
-                    write_sprite(power_sprite);
-                }
-
-            }
-        }
-
-        // Check found in case of positive speed (fall)
-        if (c->vy > 0)
-        {
-            if (pw->pos->y - OFFSET > c->pos->y + OFFSET)
-            {
-                found = (pw->pos->y - OFFSET <= c->pos->y + c->vy + OFFSET);
-
-                if (found && pw->speed)
-                {
-                    c->speed = 4;
-                    pw->speed = 0;
-                    power_sprite.count = 0;
-                    write_sprite(power_sprite);
-                }
-            }
-        }
-    }*/
-
     int collision = 0;
     int first_collision;
     

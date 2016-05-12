@@ -93,15 +93,6 @@ int main()
     grandma_sprite.orientation = LEFT;
     write_sprite(grandma_sprite);
 
-    // Setting power sprite info
-    /*power_sprite.pos.y = 40;
-    power_sprite.pos.x = 230;
-    power_sprite.shape = GP_STAND;
-    power_sprite.id = PW_ID;
-    power_sprite.count = 0;
-    power_sprite.layer = OBJECTS;
-    power_sprite.orientation = RIGHT;*/
-
     // Creating characters structures
     character grandpa;
     grandpa.pos = &(grandpa_sprite.pos);
@@ -117,17 +108,10 @@ int main()
     grandma.vy = 1;
     grandma.jumping = 0;
 
-    // Creating power_up structure
-    /*power pup;
-    pup.pos = &(power_sprite.pos);
-    pup.speed = 0;*/
-
     // Starting peripheric
     start_user_input();
 
     int count_ground = 0;
-    //int count_power = 0;
-    //int pup_timeout = 0;
     while (1)
     {   
         // Line of platforms have a 175 pixels gap between one another
@@ -136,31 +120,8 @@ int main()
             generate_ground(-8, row);
             row = (row + 1) % 3; 
             count_ground = 0;
-            count_power++;
         }
         count_ground++;
-
-        /* Power up appears after a while
-        if (count_power == 3)
-        {
-            count_power = 0;
-            power_sprite.count = 1;
-            write_sprite(power_sprite);
-            pup.speed = 1;
-        }
-
-        // Power up vanishes after a while
-        if (power_sprite.count == 1)
-        {
-            pup_timeout++;
-        }
-
-        if (pup_timeout == 10000)
-        {
-            power_sprite.count = 0;
-            write_sprite(power_sprite);
-            pup.speed = 0
-        }*/
 
         // Moves all platforms 5 pixels down
         int i, j;
@@ -181,11 +142,12 @@ int main()
             }
         }
 
-        int input;  
+        int input = input_from_user();
+
         // grandpa under user motion capture
-        if (input = input_from_user() !=  -100)
+        if (input !=  -100)
         {
-            grandpa.vx = input;
+            grandpa.vx = -2 * input;
         }
 
 
@@ -205,15 +167,6 @@ int main()
     	{
     	    grandpa_sprite.shape = GP_STAND;
     	    grandpa.jumping = 1;   
-            /*if (grandpa.speed)
-            {
-                grandpa.vy = -25;
-                grandpa.speed--;
-            }
-            else
-            {
-                grandpa.vy = -13;
-            }*/
             grandpa.vy = -13;
     	}
 
@@ -232,15 +185,6 @@ int main()
     	{
     	    grandma_sprite.shape = GM_STAND;
     	    grandma.jumping = 1;
-    	    /*if (grandma.speed)
-            {
-                grandma.vy = -25;
-                grandma.speed--;
-            }
-            else
-            {
-                grandma.vy = -13;
-            }*/
             grandma.vy = -13;
     	}
         
@@ -261,13 +205,6 @@ int main()
         }
         if (grandma.pos->y >= 480)
         {
-            /*if (!(--back.life_1))
-            {
-                back.choice = COLOR;
-                write_screen(back);
-                exit(1);
-            }*/
-            //write_screen(back);
             grandma.pos->y = 20;
             write_sprite(grandma_sprite);
         }
