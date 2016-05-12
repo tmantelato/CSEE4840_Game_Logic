@@ -4,7 +4,7 @@ extern int vga_led_fd;
 extern screen back;
 extern sprite_info ground[3][3];
 extern int line_length[3];
-extern sprite_info power_sprite;
+//extern sprite_info power_sprite;
 
 void clean ()
 { 
@@ -169,9 +169,9 @@ void generate_ground (int line, int row)
     }
 }
 
-void x_translation (character *c, character other, power *pw)
+void x_translation (character *c, character other)
 {
-    // Checking for power-up
+    /*// Checking for power-up
 
     int found = 0;
 
@@ -190,7 +190,7 @@ void x_translation (character *c, character other, power *pw)
                 if (found && pw->speed)
                 {
                     c->speed = 4;
-                    pw->speed = false;
+                    pw->speed = 0;
                     power_sprite.count = 0;
                     write_sprite(power_sprite);
                 }
@@ -208,13 +208,13 @@ void x_translation (character *c, character other, power *pw)
                 if (found && pw->speed)
                 {
                     c->speed = 4;
-                    pw->speed = false;
+                    pw->speed = 0;
                     power_sprite.count = 0;
                     write_sprite(power_sprite);
                 }
             }
         }
-    }
+    }*/
 
     int collision = 0;
     
@@ -269,9 +269,9 @@ void x_translation (character *c, character other, power *pw)
 
 }
 
-void y_translation (character *c, character other, power *pw)
+void y_translation (character *c, character other)
 {
-    int found = 0
+    /*int found = 0;
 
     // Checkin for power up
     // If the other character has pixels on the same column
@@ -290,7 +290,7 @@ void y_translation (character *c, character other, power *pw)
                 if (found && pw->speed)
                 {
                     c->speed = 4;
-                    pw->speed = false;
+                    pw->speed = 0;
                     power_sprite.count = 0;
                     write_sprite(power_sprite);
                 }
@@ -308,13 +308,13 @@ void y_translation (character *c, character other, power *pw)
                 if (found && pw->speed)
                 {
                     c->speed = 4;
-                    pw->speed = false;
+                    pw->speed = 0;
                     power_sprite.count = 0;
                     write_sprite(power_sprite);
                 }
             }
         }
-    }
+    }*/
 
     int collision = 0;
     int first_collision;

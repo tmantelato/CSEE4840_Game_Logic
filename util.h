@@ -59,7 +59,7 @@ typedef struct
 typedef struct
 {
     coordinate *pos;
-    bool speed;
+    int speed;
 }power;
 
 /* Cleans the screen by erasing every sprite */
@@ -80,11 +80,11 @@ void generate_ground (int, int);
 
 /* Try to move the character received by parameter in the x axis handling the 
    collision if necessary */
-void x_translation (character *, character, power *);
+void x_translation (character *, character);
 
 /* Try to move the character received by parameter in the y axis handling the 
    collision if necessary */
-void y_translation (character *, character, power *);
+void y_translation (character *, character);
 
 
 

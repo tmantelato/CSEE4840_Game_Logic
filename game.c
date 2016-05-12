@@ -25,7 +25,7 @@
 int vga_led_fd;
 screen back;
 sprite_info ground[3][3];
-sprite_info power_sprite;
+//sprite_info power_sprite;
 int line_length[3] = { -1, -1, -1 };
 
 int main()
@@ -49,7 +49,7 @@ int main()
     // Generating background
     back.life_1 = 2;
     back.life_2 = 2;
-    back.choice = CLOUDS;
+    back.choice = COLOR;
     back.background_color = 0xff0000;
 
     // Printing the background 
@@ -120,7 +120,7 @@ int main()
     // Creating power_up structure
     power pup;
     pup.pos = &(power_sprite.pos);
-    pup.speed = false;
+    pup.speed = 0;
 
     // Starting peripheric
     start_user_input();
@@ -140,13 +140,13 @@ int main()
         }
         count_ground++;
 
-        // Power up appears after a while
+        /* Power up appears after a while
         if (count_power == 3)
         {
             count_power = 0;
             power_sprite.count = 1;
             write_sprite(power_sprite);
-            pup.speed = true;
+            pup.speed = 1;
         }
 
         // Power up vanishes after a while
@@ -159,8 +159,8 @@ int main()
         {
             power_sprite.count = 0;
             write_sprite(power_sprite);
-            pup.speed = false
-        }
+            pup.speed = 0
+        }*/
 
         // Moves all platforms 5 pixels down
         int i, j;
@@ -192,8 +192,8 @@ int main()
         grandma.vx = 1;
 
         // Try to move grandpa
-        x_translation (&grandpa, grandma, &pup);
-        y_translation (&grandpa, grandma, &pup);
+        x_translation (&grandpa, grandma);
+        y_translation (&grandpa, grandma);
         
 
         if (grandpa.jumping)        // Fall
@@ -205,7 +205,7 @@ int main()
     	{
     	    grandpa_sprite.shape = GP_STAND;
     	    grandpa.jumping = 1;   
-            if (grandpa.speed)
+            /*if (grandpa.speed)
             {
                 grandpa.vy = -25;
                 grandpa.speed--;
@@ -213,14 +213,15 @@ int main()
             else
             {
                 grandpa.vy = -13;
-            }
+            }*/
+            grandpa.vy = -13;
     	}
 
         write_sprite(grandpa_sprite);
 
         // Try to move grandma
-        x_translation (&grandma, grandpa, &pup);
-        y_translation (&grandma, grandpa, &pup);
+        x_translation (&grandma, grandpa);
+        y_translation (&grandma, grandpa);
         
         if (grandma.jumping)        // Fall
     	{
@@ -231,7 +232,7 @@ int main()
     	{
     	    grandma_sprite.shape = GM_STAND;
     	    grandma.jumping = 1;
-    	    if (grandma.speed)
+    	    /*if (grandma.speed)
             {
                 grandma.vy = -25;
                 grandma.speed--;
@@ -239,7 +240,8 @@ int main()
             else
             {
                 grandma.vy = -13;
-            }
+            }*/
+            grandma.vy = -13;
     	}
         
         write_sprite(grandma_sprite);
