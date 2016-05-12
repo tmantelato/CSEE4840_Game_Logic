@@ -20,6 +20,7 @@
  */
 
 #include "util.h"
+#include "input_user.h"
 
 int vga_led_fd;
 screen back;
@@ -107,6 +108,9 @@ int main()
     grandma.vy = 1;
     grandma.jumping = 0;
 
+    // Starting peripheric
+    start_user_input();
+
     int count_ground = 0;
     while (1)
     {   
@@ -138,11 +142,15 @@ int main()
             }
         }
 
-        // User motion capture
-        grandpa.vx = -1;
+        int input;  
+        // grandpa under user motion capture
+        if (input = input_from_user() !=  -100)
+        {
+            grandpa.vx = input;
+        }
+
+
         grandma.vx = 1;
-        //grandpa.vy = 1;
-        //grandma.vy = 1;
 
         // Try to move grandpa
         x_translation (&grandpa, grandma);
