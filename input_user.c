@@ -23,10 +23,7 @@ int input_from_user(){
 int get_number(uint8_t keycode){
      char c = 'a' + keycode - 0x04;
      if (keycode == 0x00 ) return -100;
-
-   //pegar do bernardo.
-  //retornar int entre -10 e +10;
-  // se for precisar diminuir a escala, faca isso aqui.
+//velocity -10 = a, -9 = b ....
   int ret = (int) (c - 107);
   return ret;
 }
