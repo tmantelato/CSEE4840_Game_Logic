@@ -25,6 +25,7 @@
 int vga_led_fd;
 screen back;
 sprite_info ground[3][3];
+sprite_info power_sprite;
 int line_length[3] = { -1, -1, -1 };
 
 int main()
@@ -45,15 +46,14 @@ int main()
     // Cleaning sprites
     clean();
 
-    //int pause = 1;
-
     // Generating background
     back.life_1 = 2;
     back.life_2 = 2;
-    back.background_color = 0x152050;
+    back.choice = CLOUDS;
+    back.background_color = 0xff0000;
 
     // Printing the background 
-    write_screen(back)
+    write_screen(back);
 
     // Generating start ground
     int row = 0;                    // The next row of ground to be generated
@@ -93,6 +93,15 @@ int main()
     grandma_sprite.orientation = LEFT;
     write_sprite(grandma_sprite);
 
+    // Setting power sprite info
+    power_sprite.pos.y = 40;
+    power_sprite.pos.x = 230;
+    power_sprite.shape = GP_STAND;
+    power_sprite.id = PW_ID;
+    power_sprite.count = 0;
+    power_sprite.layer = OBJECTS;
+    power_sprite.orientation = RIGHT;
+
     // Creating characters structures
     character grandpa;
     grandpa.pos = &(grandpa_sprite.pos);
@@ -108,10 +117,17 @@ int main()
     grandma.vy = 1;
     grandma.jumping = 0;
 
+    // Creating power_up structure
+    power pup;
+    pup.pos = &(power_sprite.pos);
+    pup.speed = false;
+
     // Starting peripheric
     start_user_input();
 
     int count_ground = 0;
+    int count_power = 0;
+    int pup_timeout = 0;
     while (1)
     {   
         // Line of platforms have a 175 pixels gap between one another
@@ -120,8 +136,31 @@ int main()
             generate_ground(-8, row);
             row = (row + 1) % 3; 
             count_ground = 0;
+            count_power++;
         }
         count_ground++;
+
+        // Power up appears after a while
+        if (count_power == 3)
+        {
+            count_power = 0;
+            power_sprite.count = 1;
+            write_sprite(power_sprite);
+            pup.speed = true;
+        }
+
+        // Power up vanishes after a while
+        if (power_sprite.count == 1)
+        {
+            pup_timeout++;
+        }
+
+        if (pup_timeout == 10000)
+        {
+            power_sprite.count = 0;
+            write_sprite(power_sprite);
+            pup.speed = false
+        }
 
         // Moves all platforms 5 pixels down
         int i, j;
@@ -153,8 +192,8 @@ int main()
         grandma.vx = 1;
 
         // Try to move grandpa
-        x_translation (&grandpa, grandma);
-        y_translation (&grandpa, grandma);
+        x_translation (&grandpa, grandma, &pup);
+        y_translation (&grandpa, grandma, &pup);
         
 
         if (grandpa.jumping)        // Fall
@@ -165,15 +204,23 @@ int main()
         else                        // Jump
     	{
     	    grandpa_sprite.shape = GP_STAND;
-    	    //grandpa.jumping = 1;   
-            grandpa.vy = -13;
+    	    grandpa.jumping = 1;   
+            if (grandpa.speed)
+            {
+                grandpa.vy = -25;
+                grandpa.speed--;
+            }
+            else
+            {
+                grandpa.vy = -13;
+            }
     	}
 
         write_sprite(grandpa_sprite);
 
         // Try to move grandma
-        x_translation (&grandma, grandpa);
-        y_translation (&grandma, grandpa);
+        x_translation (&grandma, grandpa, &pup);
+        y_translation (&grandma, grandpa, &pup);
         
         if (grandma.jumping)        // Fall
     	{
@@ -183,26 +230,45 @@ int main()
         else                        // Jump
     	{
     	    grandma_sprite.shape = GM_STAND;
-    	    //grandma.jumping = 1;
-    	    grandma.vy = -13;
+    	    grandma.jumping = 1;
+    	    if (grandma.speed)
+            {
+                grandma.vy = -25;
+                grandma.speed--;
+            }
+            else
+            {
+                grandma.vy = -13;
+            }
     	}
         
         write_sprite(grandma_sprite);
 
     	// Check for end of game
     	if (grandpa.pos->y >= 480 )
-    	   grandpa.pos->y = 200;
+        {
+            if (!(--back.life_2))
+            {
+                back.choice = COLOR;
+                write_screen(back);
+                exit(1);
+            }
+    	    grandpa.pos->y = 20;
+            write_sprite(grandpa_sprite);
+        }
         if (grandma.pos->y >= 480)
-    	   grandma.pos->y = 200;
+        {
+            if (!(--back.life_1))
+            {
+                back.choice = COLOR;
+                write_screen(back);
+                exit(1);
+            }
+            grandma.pos->y = 20;
+            write_sprite(grandma_sprite);
+        }
               
         usleep(30000);
-
-        /*while(pause)
-        {
-            // ### if y movement ###
-            pause = 0;
-        }*/
-
 
     }
 

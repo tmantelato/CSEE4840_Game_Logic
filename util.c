@@ -4,12 +4,14 @@ extern int vga_led_fd;
 extern screen back;
 extern sprite_info ground[3][3];
 extern int line_length[3];
+extern sprite_info power_sprite;
 
 void clean ()
 { 
     back.life_1 = 0;
     back.life_2 = 0;
-    back.background_color = 0x152050;
+    back.background_color = 0x0;
+    back.choice = CLOUDS;
   
     sprite_info cleaner;
     cleaner.count = 0;
@@ -167,8 +169,53 @@ void generate_ground (int line, int row)
     }
 }
 
-void x_translation (character *c, character other)
+void x_translation (character *c, character other, power *pw)
 {
+    // Checking for power-up
+
+    int found = 0;
+
+    if (((pw->pos->y + OFFSET <= c->pos->y + OFFSET) &&
+        (pw->pos->y + OFFSET >= c->pos->y - OFFSET)) ||
+        ((pw->pos->y - OFFSET <= c->pos->y + OFFSET) &&
+        (pw->pos->y - OFFSET >= c->pos->y - OFFSET)))
+    {
+        // Check collision in case of negative speed
+        if (c->vx < 0)
+        {
+            if (pw->pos->x + OFFSET < c->pos->x - OFFSET)
+            {
+                found = (pw->pos->x + OFFSET >= c->pos->x + c->vx - OFFSET);
+
+                if (found && pw->speed)
+                {
+                    c->speed = 4;
+                    pw->speed = false;
+                    power_sprite.count = 0;
+                    write_sprite(power_sprite);
+                }
+
+            }
+        }
+
+        // Check collision in case of positive speed
+        if (c->vx > 0)
+        {
+            if (pw->pos->x - OFFSET > c->pos->x + OFFSET)
+            {
+                found = (pw->pos->x - OFFSET <= c->pos->x + c->vx + OFFSET);
+
+                if (found && pw->speed)
+                {
+                    c->speed = 4;
+                    pw->speed = false;
+                    power_sprite.count = 0;
+                    write_sprite(power_sprite);
+                }
+            }
+        }
+    }
+
     int collision = 0;
     
     // Checking collision
@@ -216,13 +263,59 @@ void x_translation (character *c, character other)
 
    // Checking borders condition
    if (c->pos->x <= 0)
-	c->pos->x = 640 + c->pos->x;
+    c->pos->x = 640 + c->pos->x;
    if (c->pos->x >= 640)
-	c->pos->x = c->pos->x - 640;  
+    c->pos->x = c->pos->x - 640;
+
 }
 
-void y_translation (character *c, character other)
+void y_translation (character *c, character other, power *pw)
 {
+    int found = 0
+
+    // Checkin for power up
+    // If the other character has pixels on the same column
+    if (((pw->pos->x + OFFSET <= c->pos->x + OFFSET) &&
+        (pw->pos->x + OFFSET >= c->pos->x - OFFSET)) ||
+        ((pw->pos->x - OFFSET <= c->pos->x + OFFSET) &&
+        (pw->pos->x - OFFSET >= c->pos->x - OFFSET)))
+    {
+        // Check found in case of negative speed (jump)
+        if (c->vy < 0)
+        {
+            if (pw->pos->y + OFFSET < c->pos->y - OFFSET)
+            {
+                found = (pw->pos->y + OFFSET >= c->pos->y + c->vy - OFFSET);
+
+                if (found && pw->speed)
+                {
+                    c->speed = 4;
+                    pw->speed = false;
+                    power_sprite.count = 0;
+                    write_sprite(power_sprite);
+                }
+
+            }
+        }
+
+        // Check found in case of positive speed (fall)
+        if (c->vy > 0)
+        {
+            if (pw->pos->y - OFFSET > c->pos->y + OFFSET)
+            {
+                found = (pw->pos->y - OFFSET <= c->pos->y + c->vy + OFFSET);
+
+                if (found && pw->speed)
+                {
+                    c->speed = 4;
+                    pw->speed = false;
+                    power_sprite.count = 0;
+                    write_sprite(power_sprite);
+                }
+            }
+        }
+    }
+
     int collision = 0;
     int first_collision;
     
@@ -292,7 +385,7 @@ void y_translation (character *c, character other)
                             
                             if (collision)
                             {
-                                c->pos->y = first_collision < second_collision ?
+                                c->pos->y = (first_collision < second_collision) ?
                                     first_collision : second_collision;
                                 return;
                             }
@@ -304,6 +397,12 @@ void y_translation (character *c, character other)
                 }
             }
         }
+    }
+
+    if (collision)
+    {
+        c->pos->y = first_collision;
+        return;
     }
 
     // No collision

@@ -19,9 +19,14 @@
 #define GM_STAND 1
 #define GM_JUMP 2
 
+// Back Choice
+#define COLOR 0
+#define CLOUDS 1
+
 // ID for OBJECTS' layer
 #define GP_ID 0
 #define GM_ID 1
+#define PW_ID 2
 
 // Layers
 #define SCENARIO 0
@@ -47,7 +52,15 @@ typedef struct
     int vy;
     int vx;
     int jumping;
+    int speed;
 }character;
+
+/* Power-up structure */
+typedef struct
+{
+    coordinate *pos;
+    bool speed;
+}power;
 
 /* Cleans the screen by erasing every sprite */
 void clean();
@@ -67,11 +80,11 @@ void generate_ground (int, int);
 
 /* Try to move the character received by parameter in the x axis handling the 
    collision if necessary */
-void x_translation (character *, character);
+void x_translation (character *, character, power *);
 
 /* Try to move the character received by parameter in the y axis handling the 
    collision if necessary */
-void y_translation (character *, character);
+void y_translation (character *, character, power *);
 
 
 
