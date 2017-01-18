@@ -35,10 +35,10 @@ uint8_t endpoint_address;
   char keystate[12];
 
 
-
+// starts keyboard
 void start_user_input();
 
-
+// used on the game.c
 int input_from_user();
 
 
